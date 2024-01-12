@@ -15,7 +15,7 @@ color ray_color(const ray &r, const hittable &world) {
   hit_record rec;
   // sphere s(point3(0, 0, -1), .5);
   // double t = s.hit(r, -100, 100, hr);
-  if (world.hit(r, interval(0, infinity), rec)) {
+  if (world.hit(r, interval(0.001, infinity), rec)) {
     return .5 * (rec.normal + vec3(1, 1, 1));
   }
   double a = .5 * (unit_vector(r.direction()).y() + 1);
@@ -29,7 +29,22 @@ int main(int argc, char *argv[]) {
 
   camera cam;
   cam.aspect_ratio = 16. / 9.;
+
+  // quick
+
+  // cam.image_width = 300;
+  // cam.max_depth = 5;
+
+  // better
+
   cam.image_width = 400;
+  cam.max_depth = 50;
+
+  // best
+
+  // cam.image_width = 1920;
+  // cam.max_depth = 50;
+
   cam.render(world);
 
   return 0;

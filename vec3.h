@@ -95,4 +95,15 @@ inline vec3 random_in_unit_sphere() {
   return p;
 }
 
+inline vec3 random_unit_vector() {
+  return unit_vector(random_in_unit_sphere());
+}
+
+inline vec3 random_on_hemisphere(const vec3 &normal) {
+  vec3 vec_on_unit_sphere = random_unit_vector();
+  double norm_dot = dot(vec_on_unit_sphere, normal);
+  int sign = (norm_dot > 0) - (norm_dot < 0);
+  return sign * vec_on_unit_sphere;
+}
+
 #endif // !VEC3_H

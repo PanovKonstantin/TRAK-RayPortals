@@ -4,6 +4,7 @@
 #include "color.h"
 #include "hittable.h"
 #include "utils.h"
+#include "vec3.h"
 
 class camera {
 
@@ -11,6 +12,7 @@ public:
   double aspect_ratio = 1;
   int image_width = 100;
   int sample_per_pixel = 100;
+  int max_depth = 10;
 
   void render(const hittable &world) {
     initialize();
@@ -23,7 +25,7 @@ public:
         color pixel_color(0, 0, 0);
         for (int sample = 0; sample < sample_per_pixel; ++sample) {
           auto r = get_ray(i, j);
-          pixel_color += ray_color(r, world);
+          pixel_color += ray_color(r, world, max_depth);
         }
         write_color(std::cout, pixel_color, sample_per_pixel);
       }
@@ -69,10 +71,15 @@ private:
     return (px * pixel_delta_u) + (py * pixel_delta_v);
   };
 
-  color ray_color(const ray &r, const hittable &world) const {
+  color ray_color(const ray &r, const hittable &world, int depth) const {
+    if (depth <= 0) {
+      return color(0, 0, 0);
+    }
     hit_record rec;
     if (world.hit(r, interval(0, infinity), rec)) {
-      return .5 * (rec.normal + vec3(1, 1, 1));
+      vec3 direction = random_unit_vector() + rec.normal;
+      vec3 color = .5 * ray_color(ray(rec.p, direction), world, depth - 1);
+      return color;
     }
     double a = .5 * (unit_vector(r.direction()).y() + 1);
     return color(1, 1, 1) * (1 - a) + a * color(.5, 0.7, 1);

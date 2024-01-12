@@ -3,12 +3,16 @@
 
 #include "hittable.h"
 #include "interval.h"
+#include "material.h"
+#include "utils.h"
 #include "vec3.h"
 #include <cmath>
+#include <memory>
 
 class sphere : public hittable {
 public:
-  sphere(point3 _center, double _radius) : center(_center), radius(_radius) {}
+  sphere(point3 _center, double _radius, shared_ptr<material> _material)
+      : center(_center), radius(_radius), mat(_material) {}
 
   bool hit(const ray &r, interval ray_dist, hit_record &rec) const override {
     vec3 oc = r.origin() - center;
@@ -30,12 +34,14 @@ public:
     rec.t = root;
     rec.p = r.at(rec.t);
     rec.set_face_normal(r, (rec.p - center) / radius);
+    rec.mat = mat;
     return true;
   }
 
 private:
   point3 center;
   double radius;
+  shared_ptr<material> mat;
 };
 
 #endif // !SPHERE_H

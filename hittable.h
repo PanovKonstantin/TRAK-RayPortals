@@ -1,13 +1,25 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
+#include "color.h"
 #include "interval.h"
 #include "ray.h"
+#include "utils.h"
+
+class hit_record;
+
+class material {
+public:
+  virtual ~material() = default;
+  virtual bool scatter(const ray &r_in, const hit_record &rec,
+                       color &attenuation, ray &scattered) const = 0;
+};
 
 class hit_record {
 public:
   point3 p;
   vec3 normal;
+  shared_ptr<material> mat;
   bool front_face;
   double t;
 

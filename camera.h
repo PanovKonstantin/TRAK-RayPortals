@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "vec3.h"
 
+class material;
 class camera {
 
 public:
@@ -77,9 +78,12 @@ private:
     }
     hit_record rec;
     if (world.hit(r, interval(0, infinity), rec)) {
-      vec3 direction = random_unit_vector() + rec.normal;
-      vec3 color = .5 * ray_color(ray(rec.p, direction), world, depth - 1);
-      return color;
+      ray scattered;
+      color attenuation;
+      if (rec.mat->scatter(r, rec, attenuation, scattered)) {
+        return attenuation * ray_color(scattered, world, depth - 1);
+      }
+      return color(0, 0, 0);
     }
     double a = .5 * (unit_vector(r.direction()).y() + 1);
     return color(1, 1, 1) * (1 - a) + a * color(.5, 0.7, 1);

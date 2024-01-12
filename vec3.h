@@ -38,6 +38,12 @@ public:
   double length_squared() const {
     return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
   }
+
+  bool near_zero() const {
+    auto s = 1e-8;
+    return fabs(e[0]) < s && fabs(e[1]) < s && fabs(e[2]) < s;
+  }
+
   double length() const { return sqrt(length_squared()); }
 
   static vec3 random() {
@@ -104,6 +110,10 @@ inline vec3 random_on_hemisphere(const vec3 &normal) {
   double norm_dot = dot(vec_on_unit_sphere, normal);
   int sign = (norm_dot > 0) - (norm_dot < 0);
   return sign * vec_on_unit_sphere;
+}
+
+inline vec3 reflect(const vec3 &v, const vec3 &n) {
+  return v - 2 * dot(v, n) * n;
 }
 
 #endif // !VEC3_H

@@ -116,4 +116,11 @@ inline vec3 reflect(const vec3 &v, const vec3 &n) {
   return v - 2 * dot(v, n) * n;
 }
 
+inline vec3 refract(const vec3 &v, const vec3 &n, double eta_coef) {
+  auto cos_theta = fmin(dot(-v, n), 1.);
+  vec3 perp = eta_coef * (v + cos_theta * n);
+  vec3 para = -sqrt(fabs(1. - perp.length_squared())) * n;
+  return perp + para;
+}
+
 #endif // !VEC3_H

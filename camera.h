@@ -5,6 +5,7 @@
 #include "hittable.h"
 #include "utils.h"
 #include "vec3.h"
+#include <cmath>
 
 class material;
 class camera {
@@ -14,6 +15,11 @@ public:
   int image_width = 100;
   int sample_per_pixel = 100;
   int max_depth = 10;
+
+  double vfov = 90;
+  point3 lookfrom = point3(0, 0, 0);
+  point3 lookat = point3(0, 0, -1);
+  vec3 vup = vec3(0, 1, 0);
 
   void render(const hittable &world) {
     initialize();
@@ -40,24 +46,33 @@ private:
   point3 pixel_0;
   point3 pixel_delta_u;
   point3 pixel_delta_v;
+  vec3 v, u, w;
 
   void initialize() {
     image_height = static_cast<int>(image_width / aspect_ratio);
     image_height = image_height >= 1 ? image_height : 1;
 
-    double focal_length = 1.0;
-    double viewport_height = 2.0;
+    center = lookfrom;
+
+    double focal_length = (lookfrom - lookat).length();
+    double theta = degrees_to_radiance(vfov);
+    double h = std::tan(theta / 2);
+    double viewport_height = 2 * h * focal_length;
     double actual_ratio = static_cast<double>(image_width) / image_height;
     double viewport_width = viewport_height * actual_ratio;
 
-    vec3 viewport_u = vec3(viewport_width, 0, 0);
-    vec3 viewport_v = vec3(0, -viewport_height, 0);
+    w = unit_vector(lookfrom - lookat);
+    u = unit_vector(cross(vup, w));
+    v = cross(w, u);
+
+    vec3 viewport_u = viewport_width * u;
+    vec3 viewport_v = viewport_height * -v;
 
     pixel_delta_u = viewport_u / image_width;
     pixel_delta_v = viewport_v / image_height;
 
-    pixel_0 = center - vec3(0, 0, focal_length) +
-              (pixel_delta_u + pixel_delta_v - viewport_v - viewport_u) / 2;
+    vec3 corner = (pixel_delta_u + pixel_delta_v - viewport_v - viewport_u) / 2;
+    pixel_0 = center - (focal_length * w) + corner;
   }
 
   ray get_ray(int i, int j) {

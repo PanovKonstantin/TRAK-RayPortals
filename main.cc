@@ -1,3 +1,4 @@
+#include <cmath>
 #include <memory>
 #include <windows.h>
 
@@ -9,6 +10,7 @@
 #include "material.h"
 #include "sphere.h"
 #include "utils.h"
+#include "vec3.h"
 
 color ray_color(const ray &r, const hittable &world) {
   hit_record rec;
@@ -35,18 +37,24 @@ int main(int argc, char *argv[]) {
   world.add(make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
 
   camera cam;
+
   cam.aspect_ratio = 16. / 9.;
+  cam.image_width = 400;
+  cam.max_depth = 50;
+
+  cam.vfov = 20;
+  cam.lookfrom = point3(-2, 2, 1);
+  cam.lookat = point3(0, 0, -1);
+  cam.vup = vec3(0, 1, 0);
 
   // quick
 
   // cam.image_width = 300;
   // cam.max_depth = 5;
-  // cam.sample_per_pixel = 5;
+  // cam.sample_per_pixel = 10;
 
   // better
 
-  cam.image_width = 400;
-  cam.max_depth = 50;
   //
   // best
 

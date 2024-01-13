@@ -1,17 +1,17 @@
-#ifndef SPHERE_H
-#define SPHERE_H
+#ifndef PLANE_H
+#define PLANE_H
 
-#include "hittable.h"
-#include "interval.h"
-#include "material.h"
-#include "utils.h"
-#include "vec3.h"
+#include "../hittable.h"
+#include "../interval.h"
+#include "../material.h"
+#include "../utils.h"
+#include "../vec3.h"
 #include <cmath>
 #include <memory>
 
-class sphere : public hittable {
+class plane : public hittable {
 public:
-  sphere(point3 _center, double _radius, shared_ptr<material> _material)
+  plane(point3 _center, double _radius, shared_ptr<material> _material)
       : center(_center), radius(_radius), mat(_material) {}
 
   bool hit(const ray &r, interval ray_dist, hit_record &rec) const override {
@@ -44,4 +44,4 @@ private:
   shared_ptr<material> mat;
 };
 
-#endif // !SPHERE_H
+#endif // !PLANE_H

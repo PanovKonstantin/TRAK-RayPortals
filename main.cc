@@ -41,6 +41,8 @@ int main(int argc, char *argv[]) {
   cam.aspect_ratio = 16. / 9.;
   cam.image_width = 400;
   cam.max_depth = 50;
+  cam.defocus_angle = 10;
+  cam.focus_dist = 3.4;
 
   cam.vfov = 20;
   cam.lookfrom = point3(-2, 2, 1);

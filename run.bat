@@ -1,2 +1,2 @@
 clang .\main.cc 
-.\a.exe > example.ppm
+.\a.exe > image.ppm

@@ -3,24 +3,12 @@
 
 #include "camera.h"
 #include "color.h"
-#include "hittable.h"
 #include "hittable_list.h"
-#include "interval.h"
 #include "material.h"
 #include "primitives/plane.h"
 #include "primitives/sphere.h"
-#include "primitives/triangle.h"
 #include "utils.h"
 #include "vec3.h"
-
-color ray_color(const ray &r, const hittable &world) {
-  hit_record rec;
-  if (world.hit(r, interval(0.001, infinity), rec)) {
-    return .5 * (rec.normal + vec3(1, 1, 1));
-  }
-  double a = .5 * (unit_vector(r.direction()).y() + 1);
-  return color(1, 1, 1) * (1 - a) + a * color(.5, 0.7, 1);
-}
 
 int main(int argc, char *argv[]) {
   hittable_list world;

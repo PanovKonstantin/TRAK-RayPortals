@@ -74,4 +74,19 @@ private:
   }
 };
 
+class diffuse_light : public material {
+public:
+  diffuse_light(const color &c) : albedo(c) {}
+
+  bool scatter(const ray &r_in, const hit_record &rec, color &attenuation,
+               ray &scattered) const override {
+    return false;
+  }
+
+  color emitted() const override { return albedo; }
+
+private:
+  color albedo;
+};
+
 #endif // !MATERIAL_H

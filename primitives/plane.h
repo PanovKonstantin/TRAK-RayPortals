@@ -6,42 +6,25 @@
 #include "../material.h"
 #include "../utils.h"
 #include "../vec3.h"
+#include "triangle.h"
 #include <cmath>
 #include <memory>
 
 class plane : public hittable {
 public:
-  plane(point3 _center, double _radius, shared_ptr<material> _material)
-      : center(_center), radius(_radius), mat(_material) {}
+  plane(point3 p[4], shared_ptr<material> _material)
+      : t1(p[0], p[1], p[2], _material), t2(p[1], p[2], p[3], _material) {}
 
   bool hit(const ray &r, interval ray_dist, hit_record &rec) const override {
-    vec3 oc = r.origin() - center;
-    auto a = r.direction().length_squared();
-    auto half_b = dot(oc, r.direction());
-    auto c = dot(oc, oc) - radius * radius;
-    auto d = half_b * half_b - a * c;
-    if (d < 0) {
-      return false;
-    }
-    auto sqrtd = sqrt(d);
-    auto root = (-half_b - sqrt(d)) / a;
-    if (!ray_dist.surrounds(root)) {
-      root = (-half_b + sqrt(d)) / a;
-      if (!ray_dist.surrounds(root)) {
-        return false;
-      }
-    }
-    rec.t = root;
-    rec.p = r.at(rec.t);
-    rec.set_face_normal(r, (rec.p - center) / radius);
-    rec.mat = mat;
-    return true;
+    if (t1.hit(r, ray_dist, rec))
+      return true;
+    if (t2.hit(r, ray_dist, rec))
+      return true;
+    return false;
   }
 
 private:
-  point3 center;
-  double radius;
-  shared_ptr<material> mat;
+  triangle t1, t2;
 };
 
 #endif // !PLANE_H

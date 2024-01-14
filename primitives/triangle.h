@@ -18,17 +18,20 @@ public:
   bool hit(const ray &r, interval ray_dist, hit_record &rec) const override {
     vec3 e1 = p1 - p0;
     vec3 e2 = p2 - p0;
-    vec3 N = cross(e1, e2);
+    vec3 s = r.origin() - p0;
+    vec3 N = unit_vector(cross(e1, e2));
 
     // Skip parallel
     double NdotDir = dot(N, r.direction());
     if (interval(-epsilon, epsilon).contains(NdotDir))
       return false;
 
-    double t = dot(N, p0 - r.origin()) / NdotDir;
+    double a = dot(e1, -cross(s, e2));
+    double b = dot(e1, -cross(-r.direction(), e2));
+    double t = a / b;
 
     // Skip behind camera
-    if (t <= 0.0001)
+    if (!ray_dist.contains(t))
       return false;
 
     vec3 p = r.at(t);

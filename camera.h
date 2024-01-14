@@ -13,8 +13,9 @@ class camera {
 public:
   double aspect_ratio = 1;
   int image_width = 100;
-  int samples_per_pixel = 100;
+  int samples_per_pixel = 10;
   int max_depth = 10;
+  color background = color(0, 0, 0);
 
   double vfov = 90;
   point3 lookfrom = point3(0, 0, 0);
@@ -109,18 +110,16 @@ private:
       return color(0, 0, 0);
     }
 
-    if (world.hit(r, interval(0.001, infinity), rec)) {
-      ray scattered;
-      color attenuation;
-      if (rec.mat->scatter(r, rec, attenuation, scattered)) {
-        return attenuation * ray_color(scattered, world, depth - 1);
-      }
-      return color(0, 0, 0);
+    if (!world.hit(r, interval(0.001, infinity), rec)) {
+      return background;
     }
-
-    vec3 unit_dir = unit_vector(r.direction());
-    double a = .5 * (unit_dir.y() + 1.);
-    return color(1, 1, 1) * (1 - a) + a * color(.5, 0.7, 1);
+    ray scattered;
+    color attenuation;
+    color result = rec.mat->emitted();
+    if (rec.mat->scatter(r, rec, attenuation, scattered)) {
+      result += attenuation * ray_color(scattered, world, depth - 1);
+    }
+    return result;
   }
 };
 

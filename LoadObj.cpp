@@ -113,7 +113,8 @@ hittable_list saveLoadedSceneAsPrimitives(objl::Loader Loader) {
 		// set material
 		shared_ptr<material> material;
 		if (curMesh.MeshMaterial.Ns == 360) {
-			material = make_shared<diffuse_light>(color(curMesh.MeshMaterial.Kd.X, curMesh.MeshMaterial.Kd.Y, curMesh.MeshMaterial.Kd.Z));
+			int x = 20;
+			material = make_shared<diffuse_light>(color(curMesh.MeshMaterial.Kd.X * x, curMesh.MeshMaterial.Kd.Y * x, curMesh.MeshMaterial.Kd.Z * x));
 		} else {
 			material = make_shared<lambertian>(color(curMesh.MeshMaterial.Kd.X, curMesh.MeshMaterial.Kd.Y, curMesh.MeshMaterial.Kd.Z));
 		}
@@ -181,7 +182,6 @@ hittable_list saveLoadedSceneAsPrimitives(objl::Loader Loader) {
 						break;
 					}
 				}
-
 				// If it's not a duplicate, add it to the array
 				if (!isDuplicate) {
 					cubeVertices[vertexCount] = currentVertex;
@@ -201,7 +201,7 @@ void setCamera(hittable_list world) {
 	camera cam;
 
 	cam.aspect_ratio = 16.0 / 9.0;
-	cam.image_width = 400;
+	cam.image_width = 300;
 	cam.samples_per_pixel = 100;
 	cam.max_depth = 50;
 	cam.background = color(0, 0, 0);

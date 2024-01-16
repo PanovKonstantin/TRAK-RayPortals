@@ -13,12 +13,12 @@
 class cube : public hittable {
 public:
     cube(point3 p[8], shared_ptr<material> _material)
-        : t1(p[0], p[1], p[2], _material), t2(p[1], p[3], p[2], _material),
-        t3(p[4], p[5], p[6], _material), t4(p[5], p[7], p[6], _material),
-        t5(p[0], p[1], p[4], _material), t6(p[1], p[5], p[4], _material),
-        t7(p[2], p[3], p[6], _material), t8(p[3], p[7], p[6], _material),
-        t9(p[0], p[2], p[4], _material), t10(p[2], p[6], p[4], _material),
-        t11(p[1], p[3], p[5], _material), t12(p[3], p[7], p[5], _material) {}
+        : t1(p[0], p[3], p[1], _material), t2(p[3], p[1], p[2], _material),
+        t3(p[1], p[6], p[2], _material), t4(p[2], p[6], p[4], _material),
+        t5(p[4], p[6], p[5], _material), t6(p[5], p[6], p[7], _material),
+        t7(p[7], p[5], p[0], _material), t8(p[0], p[5], p[3], _material),
+        t9(p[3], p[5], p[2], _material), t10(p[2], p[5], p[4], _material),
+        t11(p[1], p[6], p[0], _material), t12(p[0], p[6], p[7], _material) {}
     cube(point3 o, vec3 u, vec3 v, vec3 w, shared_ptr<material> _material)
         : t1(o, o + v, o + u, _material), t2(o + v + u, o + v, o + u, _material),
         t3(o, o + w, o + v, _material), t4(o + w + v, o + w, o + v, _material),

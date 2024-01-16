@@ -1,6 +1,4 @@
 #include <memory>
-#include <windows.h>
-
 #include "camera.h"
 #include "color.h"
 #include "hittable_list.h"
@@ -10,17 +8,6 @@
 #include "utils.h"
 #include "vec3.h"
 
-#include <memory>
-#include <windows.h>
-
-#include "camera.h"
-#include "color.h"
-#include "hittable_list.h"
-#include "material.h"
-#include "primitives/plane.h"
-#include "primitives/sphere.h"
-#include "utils.h"
-#include "vec3.h"
 
 void simple_light() {
   hittable_list world;

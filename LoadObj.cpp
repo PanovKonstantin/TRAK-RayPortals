@@ -155,10 +155,17 @@ hittable_list saveLoadedSceneAsPrimitives(objl::Loader Loader) {
 		}
 		else if (curMesh.MeshName.find("Plane") != std::string::npos) {
 			//create plane
+			// point3 planeVertices[4];
+			// for (int j = 0; j < curMesh.Vertices.size(); j++) {
+			// 	planeVertices[j] = point3(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
+			// }
 			point3 planeVertices[4];
 			for (int j = 0; j < curMesh.Vertices.size(); j++) {
-				planeVertices[j] = point3(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
+				// Change the order from 0, 1, 2, 3 to 0, 1, 3, 2
+				int newIndex = (j == 2) ? 3 : (j == 3) ? 2 : j;
+				planeVertices[newIndex] = point3(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
 			}
+
 			world.add(make_shared<quad>(planeVertices, material));
 		}
 		else if (curMesh.MeshName.find("Cube") != std::string::npos) {

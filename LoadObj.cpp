@@ -17,7 +17,7 @@
 #include "material.h"
 #include "primitives/plane.h"
 #include "primitives/sphere.h"
-#include "primitives/cuboid.h"
+#include "primitives/cube.h"
 #include "utils.h"
 #include "vec3.h"
 
@@ -174,7 +174,7 @@ hittable_list saveLoadedSceneAsPrimitives(objl::Loader Loader) {
 			for (int j = 0; j < curMesh.Vertices.size(); j++) {
 				cubeVertices[j] = point3(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
 			}
-			world.add(make_shared<cuboid>(cubeVertices, material));
+			world.add(make_shared<cube>(cubeVertices, material));
 		}
 		else {
 			// something else than sphere, plane or cube
@@ -190,10 +190,10 @@ void setCamera(hittable_list world) {
 	cam.image_width = 400;
 	cam.samples_per_pixel = 100;
 	cam.max_depth = 50;
-	cam.background = color(200, 200, 200);
+	cam.background = color(0, 0, 0);
 
 	cam.vfov = 40;
-	cam.lookfrom = point3(0, 2, 5);
+	cam.lookfrom = point3(0, 2, 7);
 	cam.lookat = point3(0, 1, 0);
 	cam.vup = vec3(0, 1, 0);
 
@@ -207,7 +207,7 @@ int main() {
     objl::Loader Loader;
 	hittable_list world;
     // Load .obj File
-    bool loadout = Loader.LoadFile("input/my_Cornell_Box.obj");
+    bool loadout = Loader.LoadFile("input/my_Cornell_Box_cubes.obj");
 	// Create/Open output.txt
 	std::ofstream file("output/output.txt");
 

@@ -159,7 +159,7 @@ hittable_list saveLoadedSceneAsPrimitives(objl::Loader Loader) {
 			for (int j = 0; j < curMesh.Vertices.size(); j++) {
 				planeVertices[j] = point3(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
 			}
-			world.add(make_shared<plane>(planeVertices, material));
+			world.add(make_shared<quad>(planeVertices, material));
 		}
 		else if (curMesh.MeshName.find("Cube") != std::string::npos) {
 			//create cube
@@ -183,7 +183,7 @@ void setCamera(hittable_list world) {
 	cam.image_width = 400;
 	cam.samples_per_pixel = 100;
 	cam.max_depth = 50;
-	cam.background = color(0, 0, 0);
+	cam.background = color(200, 200, 200);
 
 	cam.vfov = 40;
 	cam.lookfrom = point3(0, 2, 5);
@@ -200,7 +200,7 @@ int main() {
     objl::Loader Loader;
 	hittable_list world;
     // Load .obj File
-    bool loadout = Loader.LoadFile("input/my_Cornell_Box_cubes.obj");
+    bool loadout = Loader.LoadFile("input/my_Cornell_Box.obj");
 	// Create/Open output.txt
 	std::ofstream file("output/output.txt");
 

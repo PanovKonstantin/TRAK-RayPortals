@@ -106,7 +106,6 @@ void printLoadedFile(objl::Loader Loader, std::ofstream& file) {
 }
 
 void saveLoadedSceneAsPrimitives(objl::Loader Loader, hittable_list world) {
-	std::cout << "Zapisuje scene jako primitives...\n";
 	// Go through each loaded mesh and save it as instance of primitive and material
 	for (int i = 0; i < Loader.LoadedMeshes.size(); i++) {
 		objl::Mesh curMesh = Loader.LoadedMeshes[i];
@@ -121,7 +120,6 @@ void saveLoadedSceneAsPrimitives(objl::Loader Loader, hittable_list world) {
 		
 		// save as primitive
 		if (curMesh.MeshName.find("Sphere") != std::string::npos) {
-			std::cout << "Sphere!\n";
 			// find center of sphere
 			int minY = std::numeric_limits<int>::min();
 			int maxY = std::numeric_limits<int>::max();
@@ -156,7 +154,6 @@ void saveLoadedSceneAsPrimitives(objl::Loader Loader, hittable_list world) {
 			world.add(make_shared<sphere>(center, radius, material));
 		}
 		else if (curMesh.MeshName.find("Plane") != std::string::npos) {
-			std::cout << "Plane!\n";
 			//create plane
 			point3 planeVertices[4];
 			for (int j = 0; j < curMesh.Vertices.size(); j++) {
@@ -165,7 +162,6 @@ void saveLoadedSceneAsPrimitives(objl::Loader Loader, hittable_list world) {
 			world.add(make_shared<plane>(planeVertices, material));
 		}
 		else if (curMesh.MeshName.find("Cube") != std::string::npos) {
-			std::cout << "Cube!\n";
 			//create cube
 			point3 cubeVertices[8];
 			for (int j = 0; j < curMesh.Vertices.size(); j++) {
@@ -174,7 +170,7 @@ void saveLoadedSceneAsPrimitives(objl::Loader Loader, hittable_list world) {
 			world.add(make_shared<cuboid>(cubeVertices, material));
 		}
 		else {
-			std::cout << "Something else or nothing!\n";
+			// something else than sphere, plane or cube
 		}
 	}
 }
@@ -209,7 +205,7 @@ int main() {
 	std::ofstream file("output/output.txt");
 
 	if(loadout) {
-		// printLoadedFile(Loader, file);
+		printLoadedFile(Loader, file);
 		saveLoadedSceneAsPrimitives(Loader, world);
 
 		file.close();
@@ -219,8 +215,6 @@ int main() {
     }
 
 	setCamera(world);
-	    
-	// this is optional
-    std::cout << "Koniec programu.\n";
+
 	return 0;
 }

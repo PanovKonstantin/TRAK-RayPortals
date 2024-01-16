@@ -1,5 +1,6 @@
 // OBJ_Loader.h - A Single Header OBJ Model Loader
-// Author: Robert Smith
+// Copyright (c) 2016 Robert Smith
+// v2.0.0
 // https://github.com/Bly7/OBJ-Loader/tree/master
 
 #pragma once

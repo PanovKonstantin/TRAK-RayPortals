@@ -121,8 +121,8 @@ hittable_list saveLoadedSceneAsPrimitives(objl::Loader Loader) {
 		// save as primitive
 		if (curMesh.MeshName.find("Sphere") != std::string::npos) {
 			// find center of sphere
-			int minY = std::numeric_limits<int>::min();
-			int maxY = std::numeric_limits<int>::max();
+			int minY = std::numeric_limits<int>::max();
+			int maxY = std::numeric_limits<int>::min();
 			int minX = std::numeric_limits<int>::max();
 			int maxX = std::numeric_limits<int>::min();
 			int minZ = std::numeric_limits<int>::max();
@@ -154,11 +154,6 @@ hittable_list saveLoadedSceneAsPrimitives(objl::Loader Loader) {
 			world.add(make_shared<sphere>(center, radius, material));
 		}
 		else if (curMesh.MeshName.find("Plane") != std::string::npos) {
-			//create plane
-			// point3 planeVertices[4];
-			// for (int j = 0; j < curMesh.Vertices.size(); j++) {
-			// 	planeVertices[j] = point3(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
-			// }
 			point3 planeVertices[4];
 			for (int j = 0; j < curMesh.Vertices.size(); j++) {
 				// Change the order from 0, 1, 2, 3 to 0, 1, 3, 2
@@ -169,10 +164,29 @@ hittable_list saveLoadedSceneAsPrimitives(objl::Loader Loader) {
 			world.add(make_shared<quad>(planeVertices, material));
 		}
 		else if (curMesh.MeshName.find("Cube") != std::string::npos) {
-			//create cube
 			point3 cubeVertices[8];
-			for (int j = 0; j < curMesh.Vertices.size(); j++) {
-				cubeVertices[j] = point3(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
+			// Counter for unique vertices
+			int vertexCount = 0;
+
+			for (int j = 0; j < curMesh.Vertices.size() && vertexCount < 8; j++) {
+
+				// Create a point3 with vertex coordinates
+				point3 currentVertex(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
+
+				// Check if the vertex is already in the array
+				bool isDuplicate = false;
+				for (int k = 0; k < vertexCount; k++) {
+					if (cubeVertices[k] == currentVertex) {
+						isDuplicate = true;
+						break;
+					}
+				}
+
+				// If it's not a duplicate, add it to the array
+				if (!isDuplicate) {
+					cubeVertices[vertexCount] = currentVertex;
+					vertexCount++;
+				}
 			}
 			world.add(make_shared<cube>(cubeVertices, material));
 		}
@@ -220,7 +234,7 @@ int main() {
         file << "Nie udalo sie zaladowac pliku.\n";
         file.close();
     }
-
+	// std::cout << world.objects.size() << std::endl;
 	setCamera(world);
 
 	return 0;

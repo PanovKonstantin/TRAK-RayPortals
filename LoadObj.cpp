@@ -105,14 +105,14 @@ void printLoadedFile(objl::Loader Loader, std::ofstream& file) {
 	}
 }
 
-void saveLoadedSceneAsPrimitives(objl::Loader Loader, hittable_list world) {
+hittable_list saveLoadedSceneAsPrimitives(objl::Loader Loader) {
 	// Go through each loaded mesh and save it as instance of primitive and material
+	hittable_list world;
 	for (int i = 0; i < Loader.LoadedMeshes.size(); i++) {
 		objl::Mesh curMesh = Loader.LoadedMeshes[i];
-
-		// save as material
+		// set material
 		shared_ptr<material> material;
-		if (curMesh.MeshMaterial.Ni == 1.45) {
+		if (curMesh.MeshMaterial.Ns == 360) {
 			material = make_shared<diffuse_light>(color(curMesh.MeshMaterial.Kd.X, curMesh.MeshMaterial.Kd.Y, curMesh.MeshMaterial.Kd.Z));
 		} else {
 			material = make_shared<lambertian>(color(curMesh.MeshMaterial.Kd.X, curMesh.MeshMaterial.Kd.Y, curMesh.MeshMaterial.Kd.Z));
@@ -173,20 +173,21 @@ void saveLoadedSceneAsPrimitives(objl::Loader Loader, hittable_list world) {
 			// something else than sphere, plane or cube
 		}
 	}
+	return world;
 }
 
 void setCamera(hittable_list world) {
 	camera cam;
 
-	cam.aspect_ratio = 1.0;
-	cam.image_width = 600;
-	cam.samples_per_pixel = 300;
+	cam.aspect_ratio = 16.0 / 9.0;
+	cam.image_width = 400;
+	cam.samples_per_pixel = 100;
 	cam.max_depth = 50;
 	cam.background = color(0, 0, 0);
 
 	cam.vfov = 40;
-	cam.lookfrom = point3(278, 278, -800);
-	cam.lookat = point3(278, 278, 0);
+	cam.lookfrom = point3(0, 2, 5);
+	cam.lookat = point3(0, 1, 0);
 	cam.vup = vec3(0, 1, 0);
 
 	cam.defocus_angle = 0;
@@ -198,15 +199,14 @@ int main() {
 	// Initialize Loader and scene world
     objl::Loader Loader;
 	hittable_list world;
-
     // Load .obj File
-    bool loadout = Loader.LoadFile("input/my_Cornell_Box.obj");
+    bool loadout = Loader.LoadFile("input/my_Cornell_Box_cubes.obj");
 	// Create/Open output.txt
 	std::ofstream file("output/output.txt");
 
 	if(loadout) {
 		printLoadedFile(Loader, file);
-		saveLoadedSceneAsPrimitives(Loader, world);
+		world = saveLoadedSceneAsPrimitives(Loader);
 
 		file.close();
 	} else {

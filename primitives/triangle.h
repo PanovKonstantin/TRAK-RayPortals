@@ -9,6 +9,7 @@
 #include <cmath>
 #include <iostream>
 #include <memory>
+#include <array>
 
 class triangle : public hittable {
 public:

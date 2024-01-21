@@ -31,7 +31,8 @@ class metal : public material {
 public:
   metal(const color &a, double f) : albedo(a), fuzz(f) {}
 
-  bool scatter(const ray &r_in, const hit_record &rec, color &attenuation, ray &scattered) const override {
+  bool scatter(const ray &r_in, const hit_record &rec, color &attenuation,
+               ray &scattered) const override {
     vec3 reflected = reflect(unit_vector(r_in.direction()), rec.normal);
     scattered = ray(rec.p, reflected + fuzz * random_unit_vector());
     attenuation = albedo;
@@ -47,7 +48,8 @@ class dielectric : public material {
 public:
   dielectric(double index_of_refraction) : ir(index_of_refraction) {}
 
-  bool scatter(const ray &r_in, const hit_record &rec, color &attenuation, ray &scattered) const override {
+  bool scatter(const ray &r_in, const hit_record &rec, color &attenuation,
+               ray &scattered) const override {
 
     auto rr = rec.front_face ? 1.0 / ir : ir;
     auto unit_dir = unit_vector(r_in.direction());
@@ -89,9 +91,24 @@ private:
 };
 
 class portal_material : public material {
-    bool scatter(const ray &r_in, const hit_record &rec, color &attenuation, ray &scattered) const override {
-        return false;
+  bool scatter(const ray &r_in, const hit_record &rec, color &attenuation,
+               ray &scattered) const override {
+
+    vec3 scatter_direction = rec.normal + random_unit_vector();
+    if (scatter_direction.near_zero()) {
+      scatter_direction = rec.normal;
     }
+    scattered = ray(rec.p, scatter_direction);
+    attenuation = color(1, 1, 1);
+    return true;
+  }
+};
+
+class portal_out : public material {
+  bool scatter(const ray &r_in, const hit_record &rec, color &attenuation,
+               ray &scattered) const override {
+    return false;
+  }
 };
 
 #endif // !MATERIAL_H

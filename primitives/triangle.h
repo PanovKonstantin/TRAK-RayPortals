@@ -13,16 +13,19 @@
 class triangle : public hittable {
 public:
   triangle(point3 a, point3 b, point3 c, shared_ptr<material> _material)
-      : p0(a), p1(b), p2(c), mat(_material) {}
+      : p0(a), p1(b), p2(c), mat(_material) {
+      vec3 e1 = p1 - p0;
+      vec3 e2 = p2 - p0;
+      normal_vector = unit_vector(cross(e1, e2));
+  }
 
   bool hit(const ray &r, interval ray_dist, hit_record &rec) const override {
     vec3 e1 = p1 - p0;
     vec3 e2 = p2 - p0;
     vec3 s = r.origin() - p0;
-    vec3 N = unit_vector(cross(e1, e2));
 
     // Skip parallel
-    double NdotDir = dot(N, r.direction());
+    double NdotDir = dot(normal_vector, r.direction());
     if (interval(-epsilon, epsilon).contains(NdotDir))
       return false;
 
@@ -37,23 +40,38 @@ public:
     vec3 p = r.at(t);
 
     // Skip outside triangle
-    if (dot(N, cross(e1, p - p0)) < 0)
+    if (dot(normal_vector, cross(e1, p - p0)) < 0)
       return false;
-    if (dot(N, cross(p2 - p1, p - p1)) < 0)
+    if (dot(normal_vector, cross(p2 - p1, p - p1)) < 0)
       return false;
-    if (dot(N, cross(p0 - p2, p - p2)) < 0)
+    if (dot(normal_vector, cross(p0 - p2, p - p2)) < 0)
       return false;
 
     rec.t = t;
     rec.p = p;
-    rec.set_face_normal(r, unit_vector(N));
+    rec.set_face_normal(r, unit_vector(normal_vector));
     rec.mat = mat;
 
     return true;
   }
 
+  vec3 get_normal() const {
+    return normal_vector;
+  }
+
+  std::array<point3, 3> get_points() const {
+    std::array<point3, 3> points;
+
+    points[0] = p0;
+    points[1] = p1;
+    points[2] = p2;
+
+    return points;
+  }
+
 private:
   point3 p0, p1, p2;
+  vec3 normal_vector;
   shared_ptr<material> mat;
 };
 

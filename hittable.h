@@ -28,7 +28,6 @@ public:
     // Sets the normal vector. outward_normal must be a unit vector
 
     front_face = dot(r.direction(), outward_normal) < 0;
-    normal = front_face ? outward_normal : -outward_normal;
   }
 };
 
@@ -36,8 +35,7 @@ class hittable {
 public:
   ~hittable() = default;
 
-  virtual bool hit(const ray &r, interval ray_distance,
-                   hit_record &rec) const = 0;
+  virtual bool hit(const ray &r, interval ray_distance, hit_record &rec) const = 0;
 };
 
 #endif // !HITTABLE_H

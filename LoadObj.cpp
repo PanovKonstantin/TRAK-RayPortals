@@ -226,10 +226,10 @@ hittable_list saveLoadedSceneAsPrimitives(objl::Loader Loader) {
 			}
 			if (exitPortalVertices2[0].x() != 0 && exitPortalVertices2[0].y() != 0 && exitPortalVertices2[0].z() != 0 && entryPortalVertices2[0].x() != 0 && entryPortalVertices2[0].y() != 0 && entryPortalVertices2[0].z() != 0) {
 				auto portal_out_mat2 = make_shared<portal_out>();
-				auto exit_portal2 = make_shared<triangle>(exitPortalVertices1[1], exitPortalVertices1[0], exitPortalVertices1[2], portal_out_mat2);
+				auto exit_portal2 = make_shared<triangle>(exitPortalVertices2[1], exitPortalVertices2[0], exitPortalVertices2[2], portal_out_mat2);
 
 				auto portal_in_mat2 = make_shared<portal_in>(exit_portal2);
-				auto entry_portal2 = make_shared<triangle>(entryPortalVertices1[1], entryPortalVertices1[0], entryPortalVertices1[2], portal_in_mat2);
+				auto entry_portal2 = make_shared<triangle>(entryPortalVertices2[1], entryPortalVertices2[0], entryPortalVertices2[2], portal_in_mat2);
 
 				world.add(exit_portal2);
 				world.add(entry_portal2);
@@ -243,7 +243,7 @@ void setCamera(hittable_list world) {
 	camera cam;
 
 	cam.aspect_ratio = 16.0 / 9.0;
-	cam.image_width = 300;
+	cam.image_width = 720;
 	cam.samples_per_pixel = 100;
 	cam.max_depth = 50;
 	cam.background = color(0, 0, 0);

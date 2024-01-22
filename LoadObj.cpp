@@ -18,6 +18,7 @@
 #include "primitives/plane.h"
 #include "primitives/sphere.h"
 #include "primitives/cube.h"
+#include "primitives/portal.h"
 #include "utils.h"
 #include "vec3.h"
 
@@ -106,8 +107,10 @@ void printLoadedFile(objl::Loader Loader, std::ofstream& file) {
 }
 
 hittable_list saveLoadedSceneAsPrimitives(objl::Loader Loader) {
-	// Go through each loaded mesh and save it as instance of primitive and material
+	// Go through each loaded mesh and save it as an instance of a primitive
 	hittable_list world;
+	point3 entryPortalVertices[3];
+	point3 exitPortalVertices[3];
 	for (int i = 0; i < Loader.LoadedMeshes.size(); i++) {
 		objl::Mesh curMesh = Loader.LoadedMeshes[i];
 		// set material
@@ -189,9 +192,27 @@ hittable_list saveLoadedSceneAsPrimitives(objl::Loader Loader) {
 				}
 			}
 			world.add(make_shared<cube>(cubeVertices, material));
-		}
-		else {
-			// something else than sphere, plane or cube
+		} else if(curMesh.MeshName.find("Portal") != std::string::npos) {
+			if (curMesh.MeshName.find("Portal_we") != std::string::npos) {
+				for (int j = 0; j < curMesh.Vertices.size(); j++) {
+					entryPortalVertices[j] = point3(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
+				}
+			} else if (curMesh.MeshName.find("Portal_wy") != std::string::npos) {
+				for (int j = 0; j < curMesh.Vertices.size(); j++) {
+					exitPortalVertices[j] = point3(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
+				}
+			}
+			// no "!=" operator overload for point3, so I have to check if all coordinates are not 0
+			if (exitPortalVertices[0].x() != 0 && exitPortalVertices[0].y() != 0 && exitPortalVertices[0].z() != 0 && entryPortalVertices[0].x() != 0 && entryPortalVertices[0].y() != 0 && entryPortalVertices[0].z() != 0) {
+				auto portal_out_mat = make_shared<portal_out>();
+				auto exit_portal = make_shared<triangle>(exitPortalVertices[1], exitPortalVertices[0], exitPortalVertices[2], portal_out_mat);
+
+				auto portal_in_mat = make_shared<portal_in>(exit_portal);
+				auto entry_portal = make_shared<triangle>(entryPortalVertices[1], entryPortalVertices[0], entryPortalVertices[2], portal_in_mat);
+
+				world.add(exit_portal);
+				world.add(entry_portal);
+			}
 		}
 	}
 	return world;
@@ -216,12 +237,20 @@ void setCamera(hittable_list world) {
 	cam.render(world);
 }
 
+/*
+-f input_file_name
+-o output_file_name
+-w image_width
+-h image_height
+-s samples_per_pixel
+-d max_depth
+*/
 int main() {
 	// Initialize Loader and scene world
     objl::Loader Loader;
 	hittable_list world;
     // Load .obj File
-    bool loadout = Loader.LoadFile("input/my_Cornell_Box_cubes.obj");
+    bool loadout = Loader.LoadFile("input/my_Cornell_Box_portals_outside.obj");
 	// Create/Open output.txt
 	std::ofstream file("output/output.txt");
 
@@ -234,7 +263,6 @@ int main() {
         file << "Nie udalo sie zaladowac pliku.\n";
         file.close();
     }
-	// std::cout << world.objects.size() << std::endl;
 	setCamera(world);
 
 	return 0;

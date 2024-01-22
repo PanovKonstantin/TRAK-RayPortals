@@ -19,7 +19,7 @@ void simple_light() {
   auto mirror = make_shared<metal>(color(.9, 1, .9), 0);
   auto light = make_shared<diffuse_light>(color(4, 4, 4));
   // auto portal_mat = make_shared<portal_material>();
-  auto portal_out_mat = make_shared<portal_out>();
+  // auto portal_out_mat = make_shared<portal_out>();
 
   world.add(make_shared<sphere>(point3(-5, -1000, -2), 1000, ground));
   // world.add(make_shared<sphere>(point3(0, 2, 0), 2, ground));

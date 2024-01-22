@@ -4,7 +4,7 @@
 #include "material.h"
 #include "primitives/cube.h"
 #include "primitives/plane.h"
-#include "primitives/portal.h"
+#include "portal.h"
 #include "primitives/sphere.h"
 #include "primitives/triangle.h"
 #include "vec3.h"

@@ -2,6 +2,7 @@
 #include "color.h"
 #include "hittable_list.h"
 #include "material.h"
+#include "primitives/cube.h"
 #include "primitives/plane.h"
 #include "primitives/portal.h"
 #include "primitives/sphere.h"
@@ -17,7 +18,7 @@ void simple_light() {
   auto pink = make_shared<lambertian>(color(0.8, 0.4, 0.4));
   auto mirror = make_shared<metal>(color(.9, 1, .9), 0);
   auto light = make_shared<diffuse_light>(color(4, 4, 4));
-  auto portal_mat = make_shared<portal_material>();
+  // auto portal_mat = make_shared<portal_material>();
   auto portal_out_mat = make_shared<portal_out>();
 
   world.add(make_shared<sphere>(point3(-5, -1000, -2), 1000, ground));
@@ -35,21 +36,20 @@ void simple_light() {
 
   //
   //
-  auto entry = triangle(point3(3, 1, -1), point3(10, 1, -1), point3(3, 3, -.5),
-                        portal_mat);
+  // auto entry = triangle(point3(3, 1, -1), point3(10, 1, -1), point3(3, 3,
+  // -.5),
+  //                       portal_mat);
 
-  auto exit =
-      triangle(point3(-3, 3, 4), point3(10, 3, 4), point3(3, 3, 4), portal_mat);
-  world.add(make_shared<portal>(entry, exit));
+  // auto exit =
+  //     triangle(point3(-3, 3, 4), point3(10, 3, 4), point3(3, 3, 4),
+  //     portal_mat);
+  // world.add(make_shared<portal>(entry, exit));
 
   auto difflight = make_shared<diffuse_light>(color(8, 8, 8));
-  world.add(
-      make_shared<plane>(new point3[4]{point3(3, 1, -2), point3(5, 1, -2),
-                                       point3(3, 3, -2), point3(5, 3, -2)},
-                         difflight));
+  world.add(make_shared<sphere>(point3(4, 2, -2), 1, difflight));
 
   world.add(
-      make_shared<plane>(new point3[4]{point3(26, 0, 6), point3(-26, 0, -6),
+      make_shared<plane>(new point3[4]{point3(20, 0, 6), point3(-26, 0, -6),
                                        point3(26, 30, 6), point3(-26, 30, -6)},
                          pink));
 
@@ -83,7 +83,9 @@ void cornell_box() {
                               vec3(0, 0, 555), green));
   world.add(make_shared<quad>(point3(0, 0, 0), vec3(0, 555, 0), vec3(0, 0, 555),
                               red));
-  world.add(make_shared<quad>(point3(343, 554, 332), vec3(-130, 0, 0),
+
+  // Above box, out of the camera view
+  world.add(make_shared<quad>(point3(343, 600, 332), vec3(-130, 0, 0),
                               vec3(0, 0, -105), light));
   world.add(make_shared<quad>(point3(0, 0, 0), vec3(555, 0, 0), vec3(0, 0, 555),
                               white));
@@ -92,13 +94,38 @@ void cornell_box() {
   world.add(make_shared<quad>(point3(0, 0, 555), vec3(555, 0, 0),
                               vec3(0, 555, 0), white));
 
+  // world.add(make_shared<sphere>(point3(343 - 65, 480, 332 - 52), 50, green));
+  // world.add(make_shared<cube>(point3(400, 480, 400), vec3(0, -100, 0),
+  //                             vec3(-100, 0, 0), vec3(-20, 0, -90), green));
+  // world.add(make_shared<triangle>(vec3(363 - 150 * 2, 530, 352),
+  //                                 point3(363, 530, 352),
+  //                                 vec3(363, 530, 352 - 125 * 2), green));
+
+  auto p_out = make_shared<portal_out>();
+  //
+  //
+  // Under light, out of the camera view
+  auto out_portal = make_shared<triangle>(point3(363, 580, 352),
+                                          vec3(363 - 150 * 2, 580, 352),
+                                          vec3(363, 580, 332 - 125 * 2), p_out);
+  world.add(out_portal);
+  auto p_in = make_shared<portal_in>(out_portal);
+
+  // Inside the box, near the floor
+  world.add(make_shared<triangle>(point3(363, 114, 352),
+                                  vec3(363 - 150 * 2, 114, 352),
+                                  vec3(363, 114, 332 - 125 * 2), p_in));
+
+  // world.add(make_shared<triangle>(point3(363, 514, 352),
+  //                                 vec3(363 - 150 * 2, 514, 352),
+  //                                 vec3(363, 514, 332 - 125 * 2), green));
   camera cam;
 
   cam.aspect_ratio = 1.0;
   cam.image_width = 600;
-  cam.samples_per_pixel = 300;
-  cam.max_depth = 50;
-  cam.background = color(0, 0, 0);
+  cam.samples_per_pixel = 10;
+  cam.max_depth = 100;
+  cam.background = color(.1, .1, .1);
 
   cam.vfov = 40;
   cam.lookfrom = point3(278, 278, -800);
@@ -111,7 +138,7 @@ void cornell_box() {
 }
 
 int main() {
-  switch (1) {
+  switch (2) {
   case 1:
     simple_light();
     break;

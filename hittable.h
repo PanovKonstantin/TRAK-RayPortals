@@ -14,6 +14,10 @@ public:
   virtual bool scatter(const ray &r_in, const hit_record &rec,
                        color &attenuation, ray &scattered) const = 0;
   virtual color emitted() const { return color(0, 0, 0); }
+  virtual bool teleport(const ray &r_in, const hit_record &rec, ray &scattered,
+                        int depth, int max_depth) const {
+    return false;
+  }
 };
 
 class hit_record {
@@ -23,11 +27,13 @@ public:
   shared_ptr<material> mat;
   bool front_face;
   double t;
+  double u, v;
 
   void set_face_normal(const ray &r, const vec3 &outward_normal) {
     // Sets the normal vector. outward_normal must be a unit vector
 
     front_face = dot(r.direction(), outward_normal) < 0;
+    normal = front_face ? outward_normal : -outward_normal;
   }
 };
 
@@ -35,7 +41,8 @@ class hittable {
 public:
   ~hittable() = default;
 
-  virtual bool hit(const ray &r, interval ray_distance, hit_record &rec) const = 0;
+  virtual bool hit(const ray &r, interval ray_distance,
+                   hit_record &rec) const = 0;
 };
 
 #endif // !HITTABLE_H

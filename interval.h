@@ -3,7 +3,7 @@
 
 #include <limits>
 const double infinity = std::numeric_limits<double>::infinity();
-const double epsilon = 1e-4;
+const double epsilon = 1e-18;
 
 class interval {
 public:

@@ -7,6 +7,7 @@
 #include "utils.h"
 #include "vec3.h"
 #include <cmath>
+#include <memory>
 
 class lambertian : public material {
 public:
@@ -50,6 +51,7 @@ public:
 
   bool scatter(const ray &r_in, const hit_record &rec, color &attenuation,
                ray &scattered) const override {
+
     auto rr = rec.front_face ? 1.0 / ir : ir;
     auto unit_dir = unit_vector(r_in.direction());
     auto cos_theta = fmin(dot(-unit_dir, rec.normal), 1.0);

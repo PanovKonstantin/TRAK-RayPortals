@@ -116,7 +116,9 @@ private:
     ray scattered;
     color attenuation;
     color result = rec.mat->emitted();
-    if (rec.mat->scatter(r, rec, attenuation, scattered)) {
+    if (rec.mat->teleport(r, rec, scattered, depth, max_depth)) {
+      result += ray_color(scattered, world, depth - 1);
+    } else if (rec.mat->scatter(r, rec, attenuation, scattered)) {
       result += attenuation * ray_color(scattered, world, depth - 1);
     }
     return result;

@@ -134,4 +134,21 @@ inline vec3 refract(const vec3 &v, const vec3 &n, double eta_coef) {
   return perp + para;
 }
 
+inline vec3 barycentric_coordinates(const point3& a, const point3& b, const point3& c, const point3& p) {
+
+  vec3 v0 = b - a, v1 = c - a, v2 = p - a;
+  float d00 = dot(v0, v0);
+  float d01 = dot(v0, v1);
+  float d11 = dot(v1, v1);
+  float d20 = dot(v2, v0);
+  float d21 = dot(v2, v1);
+
+  double denom = d00 * d11 - d01 * d01;
+  double v = (d11 * d20 - d01 * d21) / denom;
+  double w = (d00 * d21 - d01 * d20) / denom;
+  double u = 1.0f - v - w;
+
+  return vec3(u, v, w);
+}
+
 #endif // !VEC3_H

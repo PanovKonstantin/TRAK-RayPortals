@@ -13,10 +13,10 @@
 class plane : public hittable {
 public:
   plane(point3 p[4], shared_ptr<material> _material)
-      : t1(p[0], p[1], p[2], _material), t2(p[1], p[2], p[3], _material) {}
+      : t1(p[0], p[2], p[1], _material), t2(p[1], p[2], p[3], _material) {}
 
   plane(point3 o, vec3 u, vec3 v, shared_ptr<material> _material)
-      : t1(o, o + v, o + u, _material), t2(o + v + u, o + v, o + u, _material) {
+      : t1(o, o + u, o + v, _material), t2(o + v + u, o + v, o + u, _material) {
   }
 
   bool hit(const ray &r, interval ray_dist, hit_record &rec) const override {

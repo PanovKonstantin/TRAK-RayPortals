@@ -271,7 +271,7 @@ int main() {
     objl::Loader Loader;
 	hittable_list world;
     // Load .obj File
-    bool loadout = Loader.LoadFile("input/my_Cornell_Box_portals.obj");
+    bool loadout = Loader.LoadFile("input/my_Cornell_Box_portals_x2.obj");
 	// Create/Open output.txt
 	std::ofstream file("output/output.txt");
 

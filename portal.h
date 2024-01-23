@@ -40,7 +40,7 @@ public:
       return false;
 
     scattered = ray(out_origin + rec.u * out_u + rec.v * out_v,
-                    out_normal + (rec.normal - r_in.direction()));
+                    out_normal + (r_in.direction() - rec.normal));
     return true;
   }
 

@@ -113,6 +113,7 @@ hittable_list saveLoadedSceneAsPrimitives(objl::Loader Loader) {
 	point3 exitPortalVertices1[3];
 	point3 entryPortalVertices2[3];
 	point3 exitPortalVertices2[3];
+	int portalCount = 0;
 	for (int i = 0; i < Loader.LoadedMeshes.size(); i++) {
 		objl::Mesh curMesh = Loader.LoadedMeshes[i];
 		// set material
@@ -199,41 +200,45 @@ hittable_list saveLoadedSceneAsPrimitives(objl::Loader Loader) {
 				for (int j = 0; j < curMesh.Vertices.size(); j++) {
 					entryPortalVertices1[j] = point3(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
 				}
+				portalCount++;
 			} else if (curMesh.MeshName.find("Portal_wy_1") != std::string::npos) {
 				for (int j = 0; j < curMesh.Vertices.size(); j++) {
 					exitPortalVertices1[j] = point3(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
 				}
-			}
-			// no "!=" operator overload for point3, so I have to check if all coordinates are not 0
-			if (exitPortalVertices1[0].x() != 0 && exitPortalVertices1[0].y() != 0 && exitPortalVertices1[0].z() != 0 && entryPortalVertices1[0].x() != 0 && entryPortalVertices1[0].y() != 0 && entryPortalVertices1[0].z() != 0) {
-				auto portal_out_mat = make_shared<portal_out>();
-				auto exit_portal = make_shared<triangle>(exitPortalVertices1[1], exitPortalVertices1[0], exitPortalVertices1[2], portal_out_mat);
-
-				auto portal_in_mat = make_shared<portal_in>(exit_portal);
-				auto entry_portal = make_shared<triangle>(entryPortalVertices1[1], entryPortalVertices1[0], entryPortalVertices1[2], portal_in_mat);
-
-				world.add(exit_portal);
-				world.add(entry_portal);
-			}
-			if (curMesh.MeshName.find("Portal_we_2") != std::string::npos) {
+				portalCount++;
+			} else if (curMesh.MeshName.find("Portal_we_2") != std::string::npos) {
 				for (int j = 0; j < curMesh.Vertices.size(); j++) {
 					entryPortalVertices2[j] = point3(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
 				}
+				portalCount++;
 			} else if (curMesh.MeshName.find("Portal_wy_2") != std::string::npos) {
 				for (int j = 0; j < curMesh.Vertices.size(); j++) {
 					exitPortalVertices2[j] = point3(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z);
 				}
+				portalCount++;
 			}
-			if (exitPortalVertices2[0].x() != 0 && exitPortalVertices2[0].y() != 0 && exitPortalVertices2[0].z() != 0 && entryPortalVertices2[0].x() != 0 && entryPortalVertices2[0].y() != 0 && entryPortalVertices2[0].z() != 0) {
+			if (portalCount == 4) {
+				auto portal_out_mat = make_shared<portal_out>();
+				auto exit_portal = make_shared<triangle>(exitPortalVertices1[1], exitPortalVertices1[0], exitPortalVertices1[2], material);
+
+				auto portal_in_mat = make_shared<portal_in>(exit_portal);
+				auto entry_portal = make_shared<triangle>(entryPortalVertices1[1], entryPortalVertices1[0], entryPortalVertices1[2], material);
+
+				std::clog << "Portal 1 added\n" << exitPortalVertices1[1] << "\n" << exitPortalVertices1[0] << "\n" << exitPortalVertices1[2] << "\n" << entryPortalVertices1[1] << "\n" << entryPortalVertices1[0] << "\n" << entryPortalVertices1[2] << "\n";
+				world.add(exit_portal);
+				world.add(entry_portal);
+
 				auto portal_out_mat2 = make_shared<portal_out>();
-				auto exit_portal2 = make_shared<triangle>(exitPortalVertices2[1], exitPortalVertices2[0], exitPortalVertices2[2], portal_out_mat2);
+				auto exit_portal2 = make_shared<triangle>(exitPortalVertices2[1], exitPortalVertices2[0], exitPortalVertices2[2], material);
 
 				auto portal_in_mat2 = make_shared<portal_in>(exit_portal2);
-				auto entry_portal2 = make_shared<triangle>(entryPortalVertices2[1], entryPortalVertices2[0], entryPortalVertices2[2], portal_in_mat2);
+				auto entry_portal2 = make_shared<triangle>(entryPortalVertices2[1], entryPortalVertices2[0], entryPortalVertices2[2], material);
 
+				std::clog << "Portal 2 added\n" << exitPortalVertices2[1] << "\n" << exitPortalVertices2[0] << "\n" << exitPortalVertices2[2] << "\n" << entryPortalVertices2[1] << "\n" << entryPortalVertices2[0] << "\n" << entryPortalVertices2[2] << "\n";
 				world.add(exit_portal2);
 				world.add(entry_portal2);
 			}
+			std::clog << "Portal count: " << portalCount << "\n";
 		}
 	}
 	return world;
@@ -243,13 +248,13 @@ void setCamera(hittable_list world) {
 	camera cam;
 
 	cam.aspect_ratio = 16.0 / 9.0;
-	cam.image_width = 720;
+	cam.image_width = 400;
 	cam.samples_per_pixel = 100;
-	cam.max_depth = 50;
+	cam.max_depth = 200;
 	cam.background = color(0, 0, 0);
 
 	cam.vfov = 40;
-	cam.lookfrom = point3(0, 2, 7);
+	cam.lookfrom = point3(0, 2, -200);
 	cam.lookat = point3(0, 1, 0);
 	cam.vup = vec3(0, 1, 0);
 
@@ -258,14 +263,6 @@ void setCamera(hittable_list world) {
 	cam.render(world);
 }
 
-/*
--f input_file_name
--o output_file_name
--w image_width
--h image_height
--s samples_per_pixel
--d max_depth
-*/
 int main() {
 	// Initialize Loader and scene world
     objl::Loader Loader;

@@ -85,8 +85,8 @@ void cornell_box() {
                               red));
 
   // Above box, out of the camera view
-  world.add(make_shared<quad>(point3(343, 600, 332), vec3(-130, 0, 0),
-                              vec3(0, 0, -105), light));
+  world.add(make_shared<triangle>(point3(0, 600, 0), vec3(130, 600, 0),
+                              vec3(0, 600, 130), light)); //light
   world.add(make_shared<quad>(point3(0, 0, 0), vec3(555, 0, 0), vec3(0, 0, 555),
                               white));
   world.add(make_shared<quad>(point3(555, 555, 555), vec3(-555, 0, 0),
@@ -105,30 +105,42 @@ void cornell_box() {
   //
   //
   // Under light, out of the camera view
-  auto out_portal = make_shared<triangle>(point3(363, 580, 352),
-                                          vec3(363 - 150 * 2, 580, 352),
-                                          vec3(363, 580, 332 - 125 * 2), p_out);
+  auto out_portal = make_shared<triangle>(point3(0, 580, 0),
+                                          vec3(130, 580, 0),
+                                          vec3(0, 580, 130), p_out);
   world.add(out_portal);
   auto p_in = make_shared<portal_in>(out_portal);
 
   // Inside the box, near the floor
-  world.add(make_shared<triangle>(point3(363, 114, 352),
-                                  vec3(363 - 150 * 2, 114, 352),
-                                  vec3(363, 114, 332 - 125 * 2), p_in));
+  world.add(make_shared<triangle>(point3(270, 150, 270),
+                                  vec3(270 - 130, 150, 270),
+                                  vec3(270, 150, 270 - 130), p_in));
 
   // world.add(make_shared<triangle>(point3(363, 514, 352),
   //                                 vec3(363 - 150 * 2, 514, 352),
   //                                 vec3(363, 514, 332 - 125 * 2), green));
+
+  auto p2_out = make_shared<portal_out>();
+  auto out_portal2 = make_shared<triangle>(point3(270, 100, 270),
+                                         vec3(270 - 130, 100, 270),
+                                         vec3(270, 100, 270 - 130), p2_out);
+  world.add(out_portal2);
+  auto p2_in = make_shared<portal_in>(out_portal2);
+  world.add(make_shared<triangle>(point3(50, 150, 270),
+                                  vec3(50, 150 - 130, 270),
+                                  vec3(50, 150, 270 + 130), p2_in));
+
+
   camera cam;
 
   cam.aspect_ratio = 1.0;
-  cam.image_width = 600;
-  cam.samples_per_pixel = 10;
+  cam.image_width = 720;
+  cam.samples_per_pixel = 300;
   cam.max_depth = 100;
   cam.background = color(.1, .1, .1);
 
   cam.vfov = 40;
-  cam.lookfrom = point3(278, 278, -800);
+  cam.lookfrom = point3(278, 278, -1200);
   cam.lookat = point3(278, 278, 0);
   cam.vup = vec3(0, 1, 0);
 
